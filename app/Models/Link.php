@@ -9,7 +9,10 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property int|mixed id
+ * @property mixed code
+ * @property mixed original_url
  * @method static factory()
+ * @method static firstOrNew(array $array)
  */
 class Link extends Model
 {

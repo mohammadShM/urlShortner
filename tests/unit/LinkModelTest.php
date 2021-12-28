@@ -60,6 +60,8 @@ class LinkModelTest extends TestCase
 
     public function test_null_is_returned_for_shortened_url_when_no_code_is_present_on_model(): void
     {
+        // for LinkObserver not use in test ===================
+        Link::flushEventListeners();
         $link = Link::factory()->create([]);
         $this->assertNull($link->shortenedUrl());
     }
