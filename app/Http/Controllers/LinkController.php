@@ -6,6 +6,7 @@ use App\Models\Link;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Cache;
 use Laravel\Lumen\Http\ResponseFactory;
 
 class LinkController extends Controller
@@ -38,10 +39,14 @@ class LinkController extends Controller
     public function show(Request $request): Response|JsonResponse|ResponseFactory
     {
         $code = $request->get('code');
-        $link = Link::byCode($code)->first();
+        $link = Cache::rememberForever("link.{$code}", static function () use ($code) {
+            return Link::byCode($code)->first();
+        });
         if ($link === null) {
             return response(null, 404);
         }
+        $link->increment('used_count');
+        // $link->touchTimestamp('last_used');
         return $this->linksResponse($link);
     }
 

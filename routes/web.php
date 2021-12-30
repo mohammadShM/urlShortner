@@ -11,3 +11,4 @@ $router->get('/test', function () use ($router) {
 
 Route::post('/', 'LinkController@store');
 Route::get('/', 'LinkController@show');
+Route::get('/stats', 'LinkStatsController@show');

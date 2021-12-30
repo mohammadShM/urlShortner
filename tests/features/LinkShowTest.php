@@ -33,4 +33,19 @@ class LinkShowTest extends TestCase
         $this->assertResponseStatus(404);
     }
 
+    public function test_use_count_is_incremented(): void
+    {
+        $link = Link::factory()->create([
+            'code' => 'abc'
+        ]);
+        $this->json('GET', '/', ['code' => $link->code]);
+        $this->json('GET', '/', ['code' => $link->code]);
+        $this->json('GET', '/', ['code' => $link->code]);
+        $this->json('GET', '/', ['code' => $link->code]);
+        $this->seeInDatabase('links', [
+            'original_url' => $link->original_url,
+            'used_count' => 4,
+        ]);
+    }
+
 }
