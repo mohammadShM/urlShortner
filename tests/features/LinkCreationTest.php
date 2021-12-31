@@ -27,7 +27,8 @@ class LinkCreationTest extends TestCase
         ])
             ->notSeeInDatabase('links', [
                 'code' => 1000000,
-            ])->seeJson(['url' => ['Ham, that is not a valid url.', 'The url is not a valid URL.']])
+            //])->seeJson(['url' => ['Ham, that is not a valid url.', 'The url is not a valid URL.']])
+            ])->seeJson(['url' => ['The url is not a valid URL.']])
             ->assertResponseStatus(422);
     }
 
@@ -36,6 +37,7 @@ class LinkCreationTest extends TestCase
         /** @noinspection LaravelFunctionsInspection */
         $this->json('POST', '/', [
             'url' => 'http://example.com',
+            'code' => 1
         ])->seeInDatabase('links', [
             'original_url' => 'http://example.com',
             'code' => 1
@@ -44,6 +46,7 @@ class LinkCreationTest extends TestCase
                 'original_url' => 'http://example.com',
                 'shortened_url' => env('CLIENT_URL') . '1',
                 'code' => '1',
+                 "0" => []
             ],
         ])->assertResponseStatus(200);
     }
@@ -51,20 +54,20 @@ class LinkCreationTest extends TestCase
     public function test_link_is_only_shortened_once(): void
     {
         $url = "http://www.google.com";
-        $this->json('POST', '/', ['url' =>  $url]);
-        $this->json('POST', '/', ['url' =>  $url]);
+        $this->json('POST', '/', ['url' => $url]);
+        $this->json('POST', '/', ['url' => $url]);
         $link = Link::query()->where(['original_url' => $url])->get();
-        $this->assertCount(1,$link);
+        $this->assertCount(1, $link);
     }
 
     public function test_requested_count_is_incremented(): void
     {
         $url = "http://www.google.com";
-        $this->json('POST', '/', ['url' =>  $url]);
-        $this->json('POST', '/', ['url' =>  $url]);
-        $this->seeInDatabase('links',[
+        $this->json('POST', '/', ['url' => $url]);
+        $this->json('POST', '/', ['url' => $url]);
+        $this->seeInDatabase('links', [
             'original_url' => $url,
-            'requested_count'=>2
+            'requested_count' => 2
         ]);
     }
 

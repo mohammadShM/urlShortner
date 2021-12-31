@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Exceptions\CodeGenerationException;
 use App\Helpers\Math;
+use App\Traits\Eloquent\TouchesTimestamps;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,9 +18,13 @@ use Illuminate\Database\Eloquent\Model;
 class Link extends Model
 {
 
-    use HasFactory;
+    use HasFactory, TouchesTimestamps;
 
     protected $guarded = ['id'];
+
+    protected $dates = [
+        'last_requested', 'last_used'
+    ];
 
     /**
      * @throws CodeGenerationException
